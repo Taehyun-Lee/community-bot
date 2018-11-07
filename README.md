@@ -2,6 +2,8 @@
 
 Community bot is a (currently planned to be) discord bot that aims to help make organizing a channel much easier.
 
+It will use argparse to do all the parsing, which will make interacting with it easier.
+
 ## Dependencies:
 iCalendar (https://github.com/collective/icalendar)
 * This is not necessary, but if you want to be able to export the generated schedule, then it is needed

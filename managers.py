@@ -1,7 +1,9 @@
 import glob
 import sys
+import os
 
-sys.path.insert(0, './managers')
+cur_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.join(cur_dir, "managers"))
 
 # imports all modules that end with _manager.py
 # This allows for any number of additional commands to be supported
