@@ -6,7 +6,7 @@ sys.path.append(os.path.join(cur_dir, "survey_resources"))
 from event import EventColl
 import schedule_parser
 from manager_basic import BasicManager
-from custom_error import DuplicatesError, InvalidChoicesError
+from custom_error import DuplicatesError, InvalidChoicesError, TimeError
 from parser_handler import get_parser_output
 
 
@@ -76,17 +76,14 @@ class ScheduleManager(BasicManager):
     new_event = sched_dic["new"]
     if(not new_event):
       return "You must supply an event name to make an event."
-    elif(self.collection.isAnEvent(new_event)):
-      return "You can't make a duplicate event."
     else:
-      self.collection.makeNewEvent(
+      return self.collection.makeNewEvent(
           {
             "id"   : user["id"],
             "name" : user["name"], 
           },
           sched_dic
         )
-      return ""
 
   def edit_event(self, user, sched_dic):
     event = sched_dic["event"]
@@ -107,7 +104,7 @@ class ScheduleManager(BasicManager):
 
     if(not event):
       return_msg = try_edit(lambda : self.collection.doMostRecentEdit(user, sched_dic))
-    elif (not self.collection.isAevent(event)):
+    elif (not self.collection.isAnEvent(event)):
       return_msg = "That event doesn't exist"
     else:
       return_msg = try_edit(lambda : self.collection.doEventEdit(user, event, sched_dic))

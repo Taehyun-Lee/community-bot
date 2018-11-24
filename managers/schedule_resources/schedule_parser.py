@@ -72,7 +72,24 @@ def get_schedule_parser():
     "-m", "--event",
     nargs = "+",
     type = str,
-    help = """An argument for to specify the event to be interacted with.""",
+    help = """\
+    An argument for to specify the event to be interacted with.
+    """,
+  )
+
+  schedule_parser.add_argument(
+    "-s", "--select_time",
+    default = "now",
+    nargs = 1,
+    type = str,
+    help = """\
+    The selector lets you to select a specific event, given that there are multiple \
+    events with the same name.
+    It will try to find the event that is closest to the specified time.
+    It prefers an earlier event, but it won't match with an event that already ended.
+
+    Default is "now".
+    """,
 
   )
 
@@ -81,7 +98,7 @@ def get_schedule_parser():
     nargs = "+",
     type = str,
     help = """\
-    An argument for where the event will occur
+    An argument for where the event will occur.
     """,
 
   )

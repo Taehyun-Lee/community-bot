@@ -13,11 +13,12 @@ DateParser
 PyTimeParse
 
 ## Under works:
-* Survey Module
-* Scheduler Module
+* Survey Module (Mostly done)
+* Scheduler Module (Under works)
 
 ## Things that need to be done:
 * Mongo DB integration (Done)
-* Output certain results to Google Sheets (may end up displaying information elsewhere)
-* Make the scheduler module output urls that will send .ics files for members to keep track of events
+* Output certain results to Google Sheets (may end up displaying information elsewhere) (Put on hold)
+* Make the scheduler module output urls that will send .ics files for members to keep track of events (Under works)
 * Create setup.py file for installing dependencies
+* Make the bot work without the need to type in commands using NLP
