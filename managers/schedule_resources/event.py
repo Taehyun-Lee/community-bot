@@ -12,7 +12,8 @@ from dateparser import parse as time_parse
 from pytimeparse import parse as delta_parse
 from icalendar import Calendar, Event
 
-def addToOutput(attr, attr_value):
+# **************** Helper Functions ************************************
+def add_to_output(attr, attr_value):
   attr = attr.capitalize()
   return f"\n{attr}:\n{attr_value}\n"
 
@@ -30,11 +31,11 @@ def format_length(len_str):
   
   return timedelta(seconds = parsed)
 
-def isOverlapping(event1, event2):
+def is_overlapping(event1, event2):
   return ((event1["start"] < event2["end"] and event1["end"] > event2["end"]) 
   or (event2["start"] < event1["end" and event2["end"] > event1["end"]]))
 
-# closestEvent takes in a list of events, a datetime object, and optional
+# closest_event takes in a list of events, a datetime object, and optional
 #  keyworded arguments 'user' and 'allow_older'.
 # The default behavior is to return the event that best corresponds to the given
 #  select_time datetime object, given that this event ends later than
@@ -45,9 +46,9 @@ def isOverlapping(event1, event2):
 #  although it will prefer to bring events that haven't ended yet.
 # For either case, if no event is found, it will return None.
 # 
-# Because closestEvent is never called before isAnEvent is called, event_list
+# Because closest_event is never called before isAnEvent is called, event_list
 #  is guaranteed to be non empty.
-def closestEvent(event_list, select_time, **kwargs):
+def closest_event(event_list, select_time, **kwargs):
   sorted(
     iterable = event_list,
     key = lambda event : event["start-time"],
@@ -101,6 +102,8 @@ def handle_time(sched_dic):
   
   return (start_time, end_time)
 
+# ^^^^^^^^^^^^^^^^^^^^^ Helper Functions ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 class EventColl:
   def __init__(self, db_name):
     self.use_mongodb = lambda : _use_mongodb(db_name, "sched_coll")
@@ -141,7 +144,7 @@ class EventColl:
     return_msg = ""
     with self.use_mongodb as coll:
       event_obj_list = coll.find_one({"event" : event}) 
-      event_obj = closestEvent(event_list, select_time, allow_older = True) # guaranteed to exist
+      event_obj = closest_event(event_list, select_time, allow_older = True) # guaranteed to exist
 
       return_msg = f"{event}:\n"
 
@@ -150,10 +153,10 @@ class EventColl:
       (length = {event_obj["end-time"] - event_obj["start-time"]})\n"""
 
       if (event_obj["description"]):
-        return_msg += addToOutput("description", event_obj["description"])
+        return_msg += add_to_output("description", event_obj["description"])
       
       if (event_obj["place"]):
-        return_msg += addToOutput("place", event_obj["place"])
+        return_msg += add_to_output("place", event_obj["place"])
 
       todo_msg = ""
       if (event_obj["todolist"]):
@@ -209,7 +212,7 @@ class EventColl:
       if (len(same_name_events)):
         for same_name_event in same_name_events:
           if (same_name_event["maker"]["id"] == maker["id"]
-            and isOverlapping(
+            and is_overlapping(
               { "start" : start_time, "end" : end_time },
               { "start" : same_name_event["start-time"], "end" : same_name_event["end-time"]}
             )):
@@ -249,7 +252,7 @@ class EventColl:
     canAdvancedEdit = False
     with self.use_mongodb() as coll:
       event_obj_list = coll.find({"event" : event})
-      event_obj = closestEvent(event_obj_list, select_time, user = user)
+      event_obj = closest_event(event_obj_list, select_time, user = user)
       canAdvancedEdit = event_obj is not None
       
     return canAdvancedEdit
@@ -262,9 +265,9 @@ class EventColl:
     with self.use_mongodb() as coll:
       event_obj_list = coll.find({"event" : event})
       if(self.isAdmin(user)):
-        event_obj = closestEvent(event_obj_list, select_time)
+        event_obj = closest_event(event_obj_list, select_time)
       else:
-        event_obj = closestEvent(event_obj_list, select_time, user = user)
+        event_obj = closest_event(event_obj_list, select_time, user = user)
 
       if(event_obj is not None):
         coll.find_one_and_delete({ "uid" : event_obj["uid"]})
@@ -282,7 +285,7 @@ class EventColl:
 
     with self.use_mongodb() as coll:
       event_obj_list = coll.find({"event", event})
-      event_obj = closestEvent(event_obj_list, select_time)
+      event_obj = closest_event(event_obj_list, select_time)
 
       if(event_obj is None):
         return f"""\
